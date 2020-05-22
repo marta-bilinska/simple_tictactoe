@@ -1,9 +1,16 @@
+"""This module contains Board and Game classes."""
 import random
 from copy import deepcopy
+from btree import Tree
 
 
 class Board:
+    """ This class defines a game board."""
     def __init__(self, data=None, last_move="0"):
+        """
+        list, str -> ()
+        Initializes a board object.
+        """
         if data is None:
             self.data = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
         else:
@@ -12,6 +19,10 @@ class Board:
         self.win = self.check_win()
 
     def person_move(self):
+        """
+        self -> ()
+        Moves as a person.
+        """
         possible_moves = self.free_cells()
         if not possible_moves:
             pass
@@ -20,14 +31,22 @@ class Board:
         self.last_move = 'x'
 
     def free_cells(self):
+        """
+        self -> list
+        Forms a list of free cells.
+        """
         free_cells = []
-        for i, el in enumerate(self.data):
-            for j, element in enumerate(el):
+        for i, element1 in enumerate(self.data):
+            for j, element in enumerate(element1):
                 if element == ' ':
                     free_cells.append((i, j))
         return free_cells
 
     def check_win(self):
+        """
+        self -> bool
+        Checks for the winning position.
+        """
         for lst in self.data:
             if lst[0] == lst[1] == lst[2] and lst[0] != ' ':
                 return True
@@ -41,12 +60,20 @@ class Board:
         return False
 
     def computer_move(self):
+        """
+        self -> ()
+        Moves as a computer.
+        """
         best_option = self.find_next_board(self.tree_creation())
 
         self.data = best_option.data
         self.last_move = '0'
 
     def tree_creation(self):
+        """
+        self -> tree
+        Creates a game boards tree.
+        """
         tree = Tree(self)
 
         def recursion(tree):
@@ -80,6 +107,10 @@ class Board:
         return tree
 
     def find_next_board(self, tree_):
+        """
+        self, tree -> board
+        Finds the optimal board for the next move.
+        """
         option1 = tree_.left
         option2 = tree_.right
 
@@ -97,27 +128,48 @@ class Board:
         return option2.root
 
     def __str__(self):
-        s = ''
-        for el in self.data:
-            s += str(el) + '\n'
-        return s
+        """
+        self -> str
+        Forms a string representation of the board.
+        """
+        string = ''
+        for element in self.data:
+            string += str(element) + '\n'
+        return string
 
     @staticmethod
     def get_player(last_player):
+        """
+        self -> ()
+        Gets the current player.
+        """
         if last_player == 'x':
             return '0'
         return 'x'
 
 
 class Game:
+    """ This class defines a game."""
     def __init__(self, board):
+        """
+        board -> ()
+        Initializes a game object.
+        """
         self.board = board
 
     def game_state(self):
+        """
+        self -> ()
+        Prints the current state of the board.
+        """
         for i in self.board.data:
             print(i)
 
     def play(self):
+        """
+        self -> ()
+        Plays the game.
+        """
         while True:
             self.board.person_move()
             print(self.board)
